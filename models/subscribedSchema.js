@@ -5,6 +5,10 @@ const subscribedSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true})
 

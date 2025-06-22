@@ -6,6 +6,7 @@ import authRouter from './routes/authRoutes.js';
 import blogRouter from './routes/blogRoutes.js';
 import journalRouter from './routes/journalRoutes.js';
 import subscribedRouter from './routes/subscribedRoutes.js';
+import resourceRouter from './routes/resourceRoutes.js';
 dotenv.config();
 
 const app = express()
@@ -19,6 +20,9 @@ app.use('/api/auth', authRouter)
 app.use('/api/blog', blogRouter)
 app.use('/api/journal', journalRouter)
 app.use('/api/subscribed', subscribedRouter)
+app.use('/api/resource', resourceRouter)
+
+
 
 app.listen(5000, () => {
     console.log('Server is running on port 5000')
