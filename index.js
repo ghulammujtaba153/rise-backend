@@ -7,6 +7,8 @@ import blogRouter from './routes/blogRoutes.js';
 import journalRouter from './routes/journalRoutes.js';
 import subscribedRouter from './routes/subscribedRoutes.js';
 import resourceRouter from './routes/resourceRoutes.js';
+import clickActionRouter from './routes/clickActionRoutes.js';
+import promotionRouter from './routes/promotionRoutes.js';
 dotenv.config();
 
 const app = express()
@@ -21,6 +23,8 @@ app.use('/api/blog', blogRouter)
 app.use('/api/journal', journalRouter)
 app.use('/api/subscribed', subscribedRouter)
 app.use('/api/resource', resourceRouter)
+app.use('/api/clickAction', clickActionRouter)
+app.use('/api/promotion', promotionRouter)
 
 
 
