@@ -3,15 +3,25 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 export const createUser = async (req, res) => {
-    const {name, email, password} = req.body
+    const {name, email, password, role} = req.body
 
     try{
-        const encryptPassword = await bcrypt.hash(password, 10)
-        const user = await User.create({
+        const data={
             name,
             email,
-            password: encryptPassword
-        })
+        }
+        
+        const encryptPassword = await bcrypt.hash(password, 10)
+
+        data.password = encryptPassword
+        
+        if(role){
+            data.role = role
+        }
+
+         const user = await User.create(data)
+
+        
         res.status(201).json({user})
     }catch(error){
         console.log(error)
