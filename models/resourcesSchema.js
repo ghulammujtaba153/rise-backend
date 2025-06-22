@@ -3,6 +3,7 @@ import mongoose  from "mongoose";
 const resourceSchema = mongoose.Schema({
     type:{
         type:String,
+        enum: ["video", "audio", "pdf"],
         required:true
     },
     title:{
