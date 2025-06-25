@@ -9,6 +9,7 @@ import subscribedRouter from './routes/subscribedRoutes.js';
 import resourceRouter from './routes/resourceRoutes.js';
 import clickActionRouter from './routes/clickActionRoutes.js';
 import promotionRouter from './routes/promotionRoutes.js';
+import newsLetterRouter from './routes/newsLetterRoutes.js';
 dotenv.config();
 
 const app = express()
@@ -25,6 +26,7 @@ app.use('/api/subscribed', subscribedRouter)
 app.use('/api/resource', resourceRouter)
 app.use('/api/clickAction', clickActionRouter)
 app.use('/api/promotion', promotionRouter)
+app.use('/api/newsletter', newsLetterRouter)
 
 
 
