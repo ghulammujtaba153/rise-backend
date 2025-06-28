@@ -13,6 +13,11 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    status: {
+        type: String,
+        enum: ["Unread", "Read", "Completed", "Ignored"],
+        default: "Unread",
+    },
     isDeleted: {
         type: Boolean,
         default: false,
