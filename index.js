@@ -11,6 +11,7 @@ import clickActionRouter from './routes/clickActionRoutes.js';
 import promotionRouter from './routes/promotionRoutes.js';
 import newsLetterRouter from './routes/newsLetterRoutes.js';
 import chatRouter from './routes/chatRoutes.js';
+import appointmentRouter from './routes/appointmentRoutes.js';
 dotenv.config();
 
 const app = express()
@@ -29,6 +30,7 @@ app.use('/api/clickAction', clickActionRouter)
 app.use('/api/promotion', promotionRouter)
 app.use('/api/newsletter', newsLetterRouter)
 app.use('/api/chat', chatRouter)
+app.use('/api/appointment', appointmentRouter)
 
 
 

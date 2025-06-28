@@ -1,16 +1,29 @@
 import ChatRoom from "../models/chatRoomSchema.js"
 import Chat from "../models/chatSchema.js"
+import User from "../models/userSchema.js"
 
 
 
 export const createChatRoom = async (req, res) => {
-    try {
-        const chatRoom = await ChatRoom.create(req.body)
-        res.status(200).json(chatRoom)
-    } catch (error) {
-        res.status.json(error)
-    }
-}
+  try {
+    const { participants } = req.body;
+
+    // Find admin users
+    const admins = await User.find({ role: "admin" });
+
+    
+    const adminIds = admins.map(admin => admin._id.toString());
+    const allParticipants = [...participants, ...adminIds];
+
+    
+    const chatRoom = await ChatRoom.create({ ...req.body, participants: allParticipants });
+
+    res.status(200).json(chatRoom);
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Something went wrong" });
+  }
+};
+
 
 
 export const getChatRoom = async (req, res) => {
