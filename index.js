@@ -12,7 +12,13 @@ import promotionRouter from './routes/promotionRoutes.js';
 import newsLetterRouter from './routes/newsLetterRoutes.js';
 import chatRouter from './routes/chatRoutes.js';
 import appointmentRouter from './routes/appointmentRoutes.js';
+import Stripe from 'stripe';
+
+
 dotenv.config();
+
+
+
 
 const app = express()
 app.use(cors())
@@ -20,6 +26,9 @@ app.use(express.json())
 
 
 connect()
+
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.use('/api/auth', authRouter)
 app.use('/api/blog', blogRouter)
@@ -31,6 +40,26 @@ app.use('/api/promotion', promotionRouter)
 app.use('/api/newsletter', newsLetterRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/appointment', appointmentRouter)
+
+
+
+
+app.post('/create-payment-intent', async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'usd',
+      automatic_payment_methods: { enabled: true }, 
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 
