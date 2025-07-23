@@ -13,6 +13,7 @@ import newsLetterRouter from './routes/newsLetterRoutes.js';
 import chatRouter from './routes/chatRoutes.js';
 import appointmentRouter from './routes/appointmentRoutes.js';
 import Stripe from 'stripe';
+import notificationRouter from './routes/notificationRoutes.js';
 
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/api/promotion', promotionRouter)
 app.use('/api/newsletter', newsLetterRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/appointment', appointmentRouter)
+app.use("/api/notifications", notificationRouter)
 
 
 
