@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "user"
     },
+    FCMToken: {
+        type: String,
+        default: ""
+    },
     status: {
         type: String,
         enum: ["active", "inactive"],

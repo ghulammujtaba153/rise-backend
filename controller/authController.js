@@ -30,7 +30,7 @@ export const createUser = async (req, res) => {
 
 
 export const loginUser = async (req, res) => {
-    const {email, password} = req.body
+    const {email, password, FCMToken} = req.body
 
     try{
         const user = await User.findOne({email})
@@ -40,6 +40,11 @@ export const loginUser = async (req, res) => {
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if(!isPasswordCorrect){
             return res.status(401).json({message: "Invalid password"})
+        }
+
+        if(FCMToken){
+            user.FCMToken = FCMToken
+            await user.save()
         }
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1h"})
         res.status(200).json({token, user})
