@@ -16,6 +16,7 @@ import Stripe from 'stripe';
 import notificationRouter from './routes/notificationRoutes.js';
 import quizRouter from './routes/quizRoutes.js';
 import mailRoutes from './routes/mailRoutes.js';
+import otpRouter from './routes/otpRoutes.js';
 
 
 dotenv.config();
@@ -46,7 +47,7 @@ app.use('/api/appointment', appointmentRouter)
 app.use("/api/notifications", notificationRouter)
 app.use('/api/quiz', quizRouter)
 app.use('/api/email', mailRoutes)
-
+app.use('/api/otp', otpRouter)
 
 
 app.post('/create-payment-intent', async (req, res) => {
