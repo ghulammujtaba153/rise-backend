@@ -1,5 +1,6 @@
 import OTP from "../models/otpSchema.js";
 import SibApiV3Sdk from "sib-api-v3-sdk";
+import User from "../models/userSchema.js";
 
 const generateOTP = async (email) => {
     try {
@@ -17,6 +18,10 @@ const generateOTP = async (email) => {
 
 const sendMail = async (email, otp) => {
     try {
+
+        
+        
+
         const defaultClient = SibApiV3Sdk.ApiClient.instance;
         defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
@@ -96,7 +101,14 @@ const sendMail = async (email, otp) => {
 
 export const sendOTP = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, existingUser } = req.body;
+
+        if (existingUser) {
+          const user = await User.findOne({ email });
+          if (!user) {
+            return res.status(400).json({ success: false, message: "User does not exist" });
+          }   
+        }
         const otp = await generateOTP(email);
         await sendMail(email, otp);
         res.status(200).json({ success: true, message: "OTP sent successfully" });
