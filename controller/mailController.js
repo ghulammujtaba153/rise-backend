@@ -1,53 +1,58 @@
 import SibApiV3Sdk from "sib-api-v3-sdk";
-import User from './../models/userSchema.js';
+import User from "./../models/userSchema.js";
 import Subscribed from "../models/subscribedSchema.js";
+
+// Helper to chunk an array into smaller parts
+const chunkArray = (array, size) => {
+  return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
+    array.slice(i * size, i * size + size)
+  );
+};
 
 export const sendEmail = async (req, res) => {
   const { subject, content, receiver } = req.body;
 
   try {
-    // Initialize Brevo API client
+    // Init Brevo client
     const defaultClient = SibApiV3Sdk.ApiClient.instance;
     defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-    // Create API instance
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-    // Initialize recipients list
+    // Fetch only required fields
     let recipients = [];
-
     if (receiver === "user") {
-      const users = await User.find({ role: "user" });
-      recipients = users.map(user => ({ email: user.email }));
+      const users = await User.find({ role: "user" }, { email: 1, _id: 0 });
+      recipients = users.map(u => ({ email: u.email }));
     }
-
     if (receiver === "subscriber") {
-      const subscribers = await Subscribed.find({ isDeleted: false });
-      recipients = subscribers.map(sub => ({ email: sub.email }));
+      const subscribers = await Subscribed.find({ isDeleted: false }, { email: 1, _id: 0 });
+      recipients = subscribers.map(s => ({ email: s.email }));
     }
 
     if (recipients.length === 0) {
       return res.status(404).json({ message: "No recipients found" });
     }
 
-    // Debug log for recipient emails
-    console.log("Recipients:", recipients);
+    console.log(`📨 Sending to ${recipients.length} recipients...`);
 
-    // Construct the email
-    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+    // Batch into chunks of 100
+    const batches = chunkArray(recipients, 100);
 
-    sendSmtpEmail.to = recipients;
-    sendSmtpEmail.subject = subject;
-    sendSmtpEmail.htmlContent = content;
-    sendSmtpEmail.sender = {
-      name: "RISE",
-      email: "riseselfesteem@gmail.com"
-    };
+    for (let i = 0; i < batches.length; i++) {
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+      sendSmtpEmail.to = batches[i];
+      sendSmtpEmail.subject = subject;
+      sendSmtpEmail.htmlContent = content;
+      sendSmtpEmail.sender = {
+        name: "RISE",
+        email: "riseselfesteem@gmail.com"
+      };
 
-    // Send the email
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
+      await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log(`✅ Batch ${i + 1}/${batches.length} sent`);
+    }
 
-    res.status(200).json({ message: "✅ Email sent successfully" });
+    res.status(200).json({ message: `✅ Emails sent in ${batches.length} batch(es)` });
 
   } catch (error) {
     console.error("❌ Email send error:", error.response?.body || error);
