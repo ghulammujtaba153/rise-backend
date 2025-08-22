@@ -3,12 +3,12 @@ import { createUser, deleteUser, forgotPassword, getAllUsers, getUser, loginUser
 
 const authRouter = express.Router();
 
-authRouter.post("/", createUser);
+authRouter.post("/add", createUser);
 authRouter.post("/login", loginUser);
 authRouter.get("/:id", getUser);
 authRouter.put("/:id", updateUser);
 authRouter.get("/", getAllUsers);
 authRouter.post("/forgot-password", forgotPassword);
-authRouter.delete("/:id", deleteUser);
+authRouter.post("/", deleteUser);
 
 export default authRouter;

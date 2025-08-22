@@ -133,7 +133,7 @@ export const forgotPassword = async (req, res) => {
 
 
 export const deleteUser = async (req, res) => {
-    const {id} = req.params
+    const {id} = req.body
     try {
         const user = await User.findByIdAndDelete(id)
         res.status(200).json({message: "User deleted successfully"})
