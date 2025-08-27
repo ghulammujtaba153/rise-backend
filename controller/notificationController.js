@@ -18,8 +18,10 @@ export const createNotification = async (req, res) => {
 
     if (type === "general") {
       // Send to all users of a specific role
-      const users = await User.find({ role, FCMToken: { $exists: true, $ne: null } });
+      const users = await User.find({FCMToken: { $exists: true, $ne: null } });
+      console.log("General users:", users);
       tokens = users.map(user => user.FCMToken);
+      console.log("General tokens:", tokens);
     } else if (type === "personal") {
       // Send to specific users
       const users = await User.find({ _id: { $in: userIds }, FCMToken: { $exists: true, $ne: null } });
