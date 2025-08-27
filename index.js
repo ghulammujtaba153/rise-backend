@@ -17,6 +17,7 @@ import notificationRouter from './routes/notificationRoutes.js';
 import quizRouter from './routes/quizRoutes.js';
 import mailRoutes from './routes/mailRoutes.js';
 import otpRouter from './routes/otpRoutes.js';
+import subscriptionRouter from './routes/subscriptionRoutes.js';
 
 
 dotenv.config();
@@ -48,6 +49,7 @@ app.use("/api/notifications", notificationRouter)
 app.use('/api/quiz', quizRouter)
 app.use('/api/email', mailRoutes)
 app.use('/api/otp', otpRouter)
+app.use('/api/subscription', subscriptionRouter);
 
 
 app.post('/create-payment-intent', async (req, res) => {
