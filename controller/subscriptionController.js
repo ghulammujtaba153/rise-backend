@@ -25,42 +25,71 @@ export const getSubscriptions = async (req, res) => {
 }
 
 
+// export const cancelSubscription = async (req, res) => {
+//     try {
+//         const event = req.body;
+
+//     console.log("Received webhook:", event);
+
+//     // ✅ Check for cancellation
+//     // if (event.type === "CANCELLATION" || event.type === "EXPIRATION") {
+//       const userId = event.app_user_id;
+//       const productId = event.product_id;
+
+//       const subscription = await Subscription.find({appUserId: userId}, {status: "canceled"}, {new: true});
+
+//     if(!subscription){
+//          return res.status(404).json({message: "Subscription not found"})
+//     }
+//     const user= await User.findById(subscription.userId);
+//     user.isSubscribed=false;
+//     await user.save();
+
+
+//     res.status(200).send({ received: true });
+//   } catch (err) {
+//     console.error("Webhook error:", err);
+//     res.status(500).send({ error: "Webhook handler failed" });
+//   }
+// }
+
+
 export const cancelSubscription = async (req, res) => {
-    try {
-        const event = req.body;
+  try {
+    const event = req.body.event; // ✅ RevenueCat sends data inside "event"
 
     console.log("Received webhook:", event);
 
-    // ✅ Check for cancellation
-    // if (event.type === "CANCELLATION" || event.type === "EXPIRATION") {
+    // Only handle cancellation events
+    if (event.type === "CANCELLATION" || event.type === "EXPIRATION") {
       const userId = event.app_user_id;
       const productId = event.product_id;
 
-      const subscription = await Subscription.find({appUserId: userId}, {status: "canceled"}, {new: true});
+      // Find and update subscription
+      const subscription = await Subscription.findOneAndUpdate(
+        { appUserId: userId, productId },
+        { status: "canceled", canceledAt: new Date(event.event_timestamp_ms) },
+        { new: true }
+      );
 
-    if(!subscription){
-         return res.status(404).json({message: "Subscription not found"})
+      if (!subscription) {
+        return res.status(404).json({ message: "Subscription not found" });
+      }
+
+      // Update user subscription status
+      const user = await User.findById(subscription.userId);
+      if (user) {
+        user.isSubscribed = false;
+        await user.save();
+      }
+
+      return res.status(200).send({ message: "Subscription cancelled", subscription });
     }
-    const user= await User.findById(subscription.userId);
-    user.isSubscribed=false;
-    await user.save();
 
-
-    res.status(200).send({ received: true });
+    // Ignore non-cancellation events
+    return res.status(200).send({ message: "Event ignored" });
   } catch (err) {
     console.error("Webhook error:", err);
-    res.status(500).send({ error: "Webhook handler failed" });
+    return res.status(500).send({ error: "Webhook handler failed" });
   }
-    //     const {appUserId} = req.body;
-    //     const subscription = await Subscription.find({appUserId: appUserId}, {status: "canceled"}, {new: true});
-    //     if(!subscription){
-    //         return res.status(404).json({message: "Subscription not found"})
-    //     }
-    //     const user= await User.findById(subscription.userId);
-    //     user.isSubscribed=false;
-    //     await user.save();
-    //     res.status(200).json({message: "Subscription cancelled successfully"});
-    // } catch (error) {
-        
-    // }
-}
+};
