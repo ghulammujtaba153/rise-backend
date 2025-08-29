@@ -67,7 +67,7 @@ export const cancelSubscription = async (req, res) => {
 
       // Find and update subscription
       const subscription = await Subscription.findOneAndUpdate(
-        { appUserId: userId, productId },
+        { appUserId: userId },
         { status: "canceled", canceledAt: new Date(event.event_timestamp_ms) },
         { new: true }
       );
