@@ -9,6 +9,6 @@ authRouter.get("/:id", getUser);
 authRouter.put("/:id", updateUser);
 authRouter.get("/", getAllUsers);
 authRouter.post("/forgot-password", forgotPassword);
-authRouter.post("/", deleteUser);
+authRouter.delete("/:id", deleteUser);
 
 export default authRouter;
