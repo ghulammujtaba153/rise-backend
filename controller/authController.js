@@ -8,7 +8,7 @@ export const createUser = async (req, res) => {
     try{
         const data={
             name,
-            email,
+            email: email.toLowerCase().trim(),
         }
         
         const encryptPassword = await bcrypt.hash(password, 10)
@@ -33,7 +33,8 @@ export const loginUser = async (req, res) => {
     const {email, password, FCMToken} = req.body
 
     try{
-        const user = await User.findOne({email})
+        const lowcaseEmail = email.toLowerCase().trim()
+        const user = await User.findOne({email: lowcaseEmail})
         if(!user){
             return res.status(404).json({message: "User not found"})
         }
